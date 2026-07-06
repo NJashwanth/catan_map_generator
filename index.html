@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catan Map Generator</title>
+    <meta
+      name="description"
+      content="Generate balanced random Catan-style maps in your browser."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Nunito:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260706a" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <h1>Catan Map Generator</h1>
+      <p>Create random, fair, and beautiful Catan-style boards in one click.</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls" aria-label="Map controls">
+        <h2>Map Controls</h2>
+
+        <div class="control-row">
+          <label for="playerCount">Number of players</label>
+          <select id="playerCount">
+            <option value="2">2 players</option>
+            <option value="3">3 players</option>
+            <option value="4" selected>4 players</option>
+            <option value="5">5 players (extension board)</option>
+            <option value="6">6 players (extension board)</option>
+          </select>
+        </div>
+
+        <div class="control-row">
+          <label for="victoryPoints">Victory points target</label>
+          <input id="victoryPoints" type="number" min="6" max="20" step="1" value="10" />
+        </div>
+
+        <div class="control-row">
+          <label for="robberMode">Robber mode</label>
+          <select id="robberMode">
+            <option value="classic" selected>Classic</option>
+            <option value="friendly">Friendly robber (no early steal)</option>
+          </select>
+        </div>
+
+        <div class="control-row">
+          <label for="seedInput">Seed (optional)</label>
+          <input
+            id="seedInput"
+            type="text"
+            maxlength="40"
+            placeholder="Leave blank for random"
+          />
+        </div>
+
+        <div class="control-row check-row">
+          <input id="fairnessToggle" type="checkbox" checked />
+          <label for="fairnessToggle">Enforce fair number spacing</label>
+        </div>
+
+        <div class="control-row check-row">
+          <input id="resourceBalanceToggle" type="checkbox" checked />
+          <label for="resourceBalanceToggle">Reduce resource clumping</label>
+        </div>
+
+        <div class="control-row check-row">
+          <input id="portsToggle" type="checkbox" checked />
+          <label for="portsToggle">Show border ports</label>
+        </div>
+
+        <div class="control-row check-row">
+          <input id="randomPortsToggle" type="checkbox" checked />
+          <label for="randomPortsToggle">Randomize port order</label>
+        </div>
+
+        <div class="button-row">
+          <button id="generateBtn" type="button">Generate Map</button>
+          <button id="shuffleBtn" type="button" class="secondary">
+            Shuffle Again
+          </button>
+        </div>
+
+        <div class="legend">
+          <h3>Resources</h3>
+          <ul>
+            <li><span class="dot wood"></span> Wood</li>
+            <li><span class="dot brick"></span> Brick</li>
+            <li><span class="dot sheep"></span> Sheep</li>
+            <li><span class="dot wheat"></span> Wheat</li>
+            <li><span class="dot ore"></span> Ore</li>
+            <li><span class="dot desert"></span> Desert</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="panel board-panel" aria-label="Generated board">
+        <h2>Generated Board</h2>
+        <div class="board-shell">
+          <div id="portRing" class="port-ring" aria-hidden="true"></div>
+          <div id="board" class="board" aria-live="polite"></div>
+        </div>
+        <p id="boardMeta" class="meta"></p>
+      </section>
+
+      <aside class="panel ad-panel" aria-label="Advertisement">
+        <h2>Support This Project</h2>
+        <p>
+          Ads appear here once AdSense is configured with your publisher ID and
+          this site is approved.
+        </p>
+
+        <!--
+          Google AdSense placeholder.
+          Replace ca-pub-XXXXXXXXXXXXXXXX with your real publisher id.
+          Replace data-ad-slot with your ad slot id.
+        -->
+        <ins
+          class="adsbygoogle"
+          style="display: block"
+          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+          data-ad-slot="1234567890"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+      </aside>
+    </main>
+
+    <footer class="site-footer">
+      <p>Built for board game nights. Not affiliated with Catan publishers.</p>
+    </footer>
+
+    <!--
+      Google AdSense script.
+      Keep this enabled in production after replacing your publisher id.
+      It can stay commented in development.
+    -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+
+    <script src="script.js?v=20260706a"></script>
+  </body>
+</html>

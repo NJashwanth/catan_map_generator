@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+*-debug.log
+
+# Node (if tooling is added later)
+node_modules/
+npm-debug.log*
+
+# Env / secrets
+.env
+.env.*
+
+# Logs & temp
+*.log
+*.tmp
