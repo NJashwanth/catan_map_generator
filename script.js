@@ -44,8 +44,7 @@ const RESOURCE_ICONS = {
   brick: "\u{1F9F1}",
   sheep: "\u{1F411}",
   wheat: "\u{1F33E}",
-  ore: "⛰️",
-  desert: "\u{1F3DC}️",
+  ore: "⛏",
 };
 
 const PORT_LABELS = {
@@ -68,9 +67,6 @@ const NEIGHBOR_DIRS = [
 ];
 
 const boardEl = document.getElementById("board");
-const boardShellEl = document.querySelector(".board-shell");
-const boardWrapEl = document.getElementById("boardWrap");
-const portRingEl = document.getElementById("portRing");
 const metaEl = document.getElementById("boardMeta");
 
 const seedInput = document.getElementById("seedInput");
@@ -294,172 +290,279 @@ function generateMap(options) {
   };
 }
 
-function toPixel(q, r, hexW, hexH, radius) {
-  const x = hexW * (q + r / 2);
-  const y = hexH * 0.75 * r;
+/* ------------------------------------------------------------------ */
+/* SVG board rendering                                                 */
+/* ------------------------------------------------------------------ */
 
+const HEX_SIZE = 46; // center-to-corner radius in SVG units
+
+function axialToPixel(q, r) {
   return {
-    x: x + radius,
-    y: y + radius,
+    x: Math.sqrt(3) * HEX_SIZE * (q + r / 2),
+    y: 1.5 * HEX_SIZE * r,
   };
 }
 
-function perimeterEdges(cells) {
-  const byCoord = indexCells(cells);
+function hexPoints(cx, cy, radius) {
+  const pts = [];
+  for (let i = 0; i < 6; i += 1) {
+    const angle = ((60 * i - 30) * Math.PI) / 180;
+    pts.push(`${(cx + radius * Math.cos(angle)).toFixed(2)},${(cy + radius * Math.sin(angle)).toFixed(2)}`);
+  }
+  return pts.join(" ");
+}
 
-  const edges = [];
+function seaRing(cells) {
+  const land = indexCells(cells);
+  const sea = new Map();
+
   cells.forEach((cell) => {
-    for (let i = 0; i < NEIGHBOR_DIRS.length; i += 1) {
-      const [dq, dr] = NEIGHBOR_DIRS[i];
-      if (!byCoord.has(keyOf(cell.q + dq, cell.r + dr))) {
-        edges.push({
-          q: cell.q,
-          r: cell.r,
-          dq,
-          dr,
-        });
+    NEIGHBOR_DIRS.forEach(([dq, dr]) => {
+      const q = cell.q + dq;
+      const r = cell.r + dr;
+      const key = keyOf(q, r);
+      if (!land.has(key) && !sea.has(key)) {
+        sea.set(key, { q, r });
       }
-    }
+    });
   });
 
-  return edges;
+  return [...sea.values()];
 }
 
-function directionToPixel(dq, dr, hexW, hexH) {
-  const x = hexW * (dq + dr / 2);
-  const y = hexH * 0.75 * dr;
-  return { x, y };
+const SVG_DEFS = `
+  <defs>
+    <radialGradient id="g-wood" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#5d9047" /><stop offset="100%" stop-color="#3f6d34" />
+    </radialGradient>
+    <radialGradient id="g-sheep" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#b7d977" /><stop offset="100%" stop-color="#93bd52" />
+    </radialGradient>
+    <radialGradient id="g-wheat" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#f0c752" /><stop offset="100%" stop-color="#d9a52f" />
+    </radialGradient>
+    <radialGradient id="g-brick" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#c17a3d" /><stop offset="100%" stop-color="#9c5a26" />
+    </radialGradient>
+    <radialGradient id="g-ore" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#9a9dab" /><stop offset="100%" stop-color="#6d7080" />
+    </radialGradient>
+    <radialGradient id="g-desert" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#ecdcae" /><stop offset="100%" stop-color="#d6bf85" />
+    </radialGradient>
+    <radialGradient id="g-sea" cx="50%" cy="42%" r="80%">
+      <stop offset="0%" stop-color="#7fb7e2" /><stop offset="100%" stop-color="#5b96c8" />
+    </radialGradient>
+
+    <symbol id="s-tree" viewBox="0 0 24 24">
+      <rect x="10.6" y="16" width="2.8" height="6" rx="1" fill="#5f3d1e" />
+      <polygon points="12,1.5 19.5,11.5 4.5,11.5" fill="#28511f" />
+      <polygon points="12,6.5 21,17.5 3,17.5" fill="#2f6126" />
+    </symbol>
+    <symbol id="s-sheep" viewBox="0 0 24 24">
+      <rect x="7" y="15" width="2.2" height="5.5" rx="1" fill="#4c463c" />
+      <rect x="14.5" y="15" width="2.2" height="5.5" rx="1" fill="#4c463c" />
+      <ellipse cx="11.6" cy="12.4" rx="8" ry="5.6" fill="#f7f3e7" stroke="#d9d0ba" stroke-width="0.8" />
+      <circle cx="19" cy="10.4" r="2.8" fill="#4c463c" />
+    </symbol>
+    <symbol id="s-wheat" viewBox="0 0 24 24">
+      <g stroke="#8a6a17" stroke-width="1.7" fill="none" stroke-linecap="round">
+        <path d="M12 22 V7" /><path d="M12 13 C9 12 7.6 9.4 7.4 6.6" /><path d="M12 13 C15 12 16.4 9.4 16.6 6.6" />
+      </g>
+      <ellipse cx="12" cy="5" rx="2.3" ry="3.4" fill="#8a6a17" />
+      <ellipse cx="7" cy="4.6" rx="1.9" ry="2.8" fill="#9d7c1f" transform="rotate(-24 7 4.6)" />
+      <ellipse cx="17" cy="4.6" rx="1.9" ry="2.8" fill="#9d7c1f" transform="rotate(24 17 4.6)" />
+    </symbol>
+    <symbol id="s-clay" viewBox="0 0 24 24">
+      <rect x="3.5" y="13.5" width="17" height="6.5" rx="2.4" fill="#7e4218" />
+      <rect x="6.5" y="7" width="11" height="6.5" rx="2.4" fill="#93531f" />
+      <rect x="9" y="1.5" width="6" height="5.5" rx="2" fill="#a5622a" />
+    </symbol>
+    <symbol id="s-mtn" viewBox="0 0 24 24">
+      <polygon points="12,2.5 22,21.5 2,21.5" fill="#565a68" />
+      <polygon points="12,2.5 16,10 8,10" fill="#eef1f6" />
+      <polygon points="16,9 21,21.5 11,21.5" fill="#474b58" opacity="0.65" />
+    </symbol>
+    <symbol id="s-dune" viewBox="0 0 24 24">
+      <path d="M2 17 Q7.5 10.5 13 17 T24 17" stroke="#b89b5e" stroke-width="2.2" fill="none" stroke-linecap="round" />
+    </symbol>
+    <symbol id="s-wave" viewBox="0 0 24 24">
+      <path d="M2 13 Q6 8.5 10 13 T18 13" stroke="rgba(255,255,255,0.65)" stroke-width="2.1" fill="none" stroke-linecap="round" />
+    </symbol>
+  </defs>
+`;
+
+const TERRAIN_ART = {
+  wood: { fill: "url(#g-wood)", symbol: "s-tree", spots: [[-21, -13, 19], [15, -18, 17], [-1, 15, 20]] },
+  sheep: { fill: "url(#g-sheep)", symbol: "s-sheep", spots: [[-20, -14, 18], [14, -18, 16], [-2, 15, 18]] },
+  wheat: { fill: "url(#g-wheat)", symbol: "s-wheat", spots: [[-21, -14, 18], [15, -17, 17], [-1, 14, 19]] },
+  brick: { fill: "url(#g-brick)", symbol: "s-clay", spots: [[-20, -14, 18], [14, -18, 16], [-2, 14, 19]] },
+  ore: { fill: "url(#g-ore)", symbol: "s-mtn", spots: [[-21, -13, 19], [15, -17, 17], [-1, 15, 20]] },
+  desert: { fill: "url(#g-desert)", symbol: "s-dune", spots: [[-14, -12, 20], [8, -2, 22], [-8, 10, 20]] },
+};
+
+function terrainDecorSvg(art, cx, cy) {
+  return art.spots
+    .map(([dx, dy, size]) => {
+      const x = (cx + dx - size / 2).toFixed(2);
+      const y = (cy + dy - size / 2).toFixed(2);
+      return `<use href="#${art.symbol}" x="${x}" y="${y}" width="${size}" height="${size}" />`;
+    })
+    .join("");
 }
 
-function choosePortAnchors(cells, count, geometry) {
-  const boundary = perimeterEdges(cells)
-    .map((edge) => {
-      const center = toPixel(edge.q, edge.r, geometry.hexW, geometry.hexH, geometry.radiusPx);
-      const dir = directionToPixel(edge.dq, edge.dr, geometry.hexW, geometry.hexH);
+function numberTokenSvg(number, cx, cy) {
+  const hot = HIGH_PROBABILITY_NUMBERS.has(number);
+  const color = hot ? "#b3262f" : "#2b2317";
+  const pipCount = 6 - Math.abs(7 - number);
 
-      const edgeX = center.x + dir.x / 2 - geometry.minX + geometry.padding;
-      const edgeY = center.y + dir.y / 2 - geometry.minY + geometry.padding;
+  let pips = "";
+  const pipSpan = (pipCount - 1) * 3.4;
+  for (let i = 0; i < pipCount; i += 1) {
+    const px = (cx - pipSpan / 2 + i * 3.4).toFixed(2);
+    pips += `<circle cx="${px}" cy="${(cy + 8.6).toFixed(2)}" r="1.15" fill="${color}" />`;
+  }
 
-      return {
-        edgeX,
-        edgeY,
-        outwardX: dir.x,
-        outwardY: dir.y,
-        angle: Math.atan2(edgeY - geometry.height / 2, edgeX - geometry.width / 2),
-      };
+  return `
+    <circle cx="${cx}" cy="${cy}" r="15.5" fill="#f8efd7" stroke="#a98f55" stroke-width="1.1" />
+    <text x="${cx}" y="${(cy + 3.4).toFixed(2)}" text-anchor="middle" font-family="Cinzel, Georgia, serif"
+      font-size="14.5" font-weight="700" fill="${color}">${number}</text>
+    ${pips}
+  `;
+}
+
+function landTileSvg(cell) {
+  const { x, y } = axialToPixel(cell.q, cell.r);
+  const art = TERRAIN_ART[cell.resource];
+  const label = RESOURCE_LABELS[cell.resource] || cell.resource;
+
+  let svg = `<g>`;
+  svg += `<title>${label}${cell.number ? ` — ${cell.number}` : ""}</title>`;
+  svg += `<polygon points="${hexPoints(x, y, HEX_SIZE - 1)}" fill="#ead9ab" stroke="#bfa163" stroke-width="1.4" />`;
+  svg += `<polygon points="${hexPoints(x, y, HEX_SIZE - 4.5)}" fill="${art.fill}" />`;
+  svg += terrainDecorSvg(art, x, y);
+  if (cell.number != null) {
+    svg += numberTokenSvg(cell.number, x, y);
+  }
+  svg += `</g>`;
+  return svg;
+}
+
+function seaTileSvg(tile) {
+  const { x, y } = axialToPixel(tile.q, tile.r);
+  let svg = `<g>`;
+  svg += `<polygon points="${hexPoints(x, y, HEX_SIZE - 1.5)}" fill="url(#g-sea)" />`;
+  svg += `<use href="#s-wave" x="${(x - 20).toFixed(2)}" y="${(y - 16).toFixed(2)}" width="20" height="20" />`;
+  svg += `<use href="#s-wave" x="${(x + 1).toFixed(2)}" y="${(y + 2).toFixed(2)}" width="20" height="20" />`;
+  svg += `</g>`;
+  return svg;
+}
+
+function choosePortTiles(seaTiles, landByCoord, count) {
+  const withAngle = seaTiles
+    .map((tile) => {
+      const { x, y } = axialToPixel(tile.q, tile.r);
+      return { ...tile, x, y, angle: Math.atan2(y, x) };
     })
     .sort((a, b) => a.angle - b.angle);
 
-  const anchors = [];
+  const chosen = [];
   for (let i = 0; i < count; i += 1) {
-    const index = Math.floor((i * boundary.length) / count) % boundary.length;
-    anchors.push(boundary[index]);
-  }
+    const index = Math.floor((i * withAngle.length) / count + withAngle.length / (2 * count)) % withAngle.length;
+    const tile = withAngle[index];
 
-  return anchors;
+    // Pier points at the nearest land neighbor's shared edge.
+    let target = null;
+    for (const [dq, dr] of NEIGHBOR_DIRS) {
+      const land = landByCoord.get(keyOf(tile.q + dq, tile.r + dr));
+      if (land) {
+        target = axialToPixel(land.q, land.r);
+        break;
+      }
+    }
+    chosen.push({ ...tile, target });
+  }
+  return chosen;
 }
 
-function renderPorts(ports, cells, geometry, showPorts) {
-  portRingEl.innerHTML = "";
-  if (!showPorts) {
-    return;
+function portSvg(portType, tile) {
+  const { x, y, target } = tile;
+
+  let pier = "";
+  if (target) {
+    const ex = (x + target.x) / 2;
+    const ey = (y + target.y) / 2;
+    pier = `
+      <line x1="${x}" y1="${y}" x2="${ex.toFixed(2)}" y2="${ey.toFixed(2)}"
+        stroke="#7a5230" stroke-width="4.5" stroke-linecap="round" />
+    `;
   }
 
-  const anchors = choosePortAnchors(cells, ports.length, geometry);
+  const ratio = portType === "three" ? "3:1" : "2:1";
+  const icon = portType === "three" ? "?" : RESOURCE_ICONS[portType] || "?";
 
-  anchors.forEach((anchor, i) => {
-    const magnitude = Math.hypot(anchor.outwardX, anchor.outwardY) || 1;
-    const ux = anchor.outwardX / magnitude;
-    const uy = anchor.outwardY / magnitude;
-
-    const outwardDistance = geometry.radiusPx * 0.6;
-    const x = anchor.edgeX + ux * outwardDistance;
-    const y = anchor.edgeY + uy * outwardDistance;
-
-    const portType = ports[i];
-    const tag = document.createElement("div");
-    tag.className = `port-tag ${portType}`;
-    tag.textContent = PORT_LABELS[portType] || portType;
-    tag.style.left = `${x}px`;
-    tag.style.top = `${y}px`;
-
-    portRingEl.appendChild(tag);
-  });
+  return `
+    <g>
+      <title>${PORT_LABELS[portType] || portType}</title>
+      ${pier}
+      <rect x="${(x - 19).toFixed(2)}" y="${(y - 15).toFixed(2)}" width="38" height="30" rx="8"
+        fill="#fdf6e2" stroke="#b49a63" stroke-width="1.1" />
+      <text x="${x}" y="${(y - 1.5).toFixed(2)}" text-anchor="middle" font-size="11.5"
+        font-family="Nunito, sans-serif" font-weight="800" fill="#4a3a20">${icon}</text>
+      <text x="${x}" y="${(y + 10.5).toFixed(2)}" text-anchor="middle" font-size="8.5"
+        font-family="Nunito, sans-serif" font-weight="800" fill="#6b5836">${ratio}</text>
+    </g>
+  `;
 }
 
 function renderBoard(result, setup) {
-  const { cells, ports, config, attempt } = result;
+  const { cells, ports, attempt } = result;
   const { seedText, playerCount, victoryPoints, robberMode, showPorts } = setup;
 
-  boardEl.innerHTML = "";
-
-  const isLarge = config.rowLayout.length > 5;
-  boardShellEl.classList.toggle("large", isLarge);
-
-  const hexW = isLarge ? 78 : 84;
-  const hexH = isLarge ? 90 : 96;
-  const radiusPx = hexW / 2;
-  // Wide enough for port tags anchored outside the coastline.
-  const padding = showPorts ? 96 : 66;
-
-  const points = cells.map((cell) => toPixel(cell.q, cell.r, hexW, hexH, radiusPx));
+  const sea = seaRing(cells);
+  const allTiles = [...cells, ...sea];
 
   let minX = Infinity;
   let maxX = -Infinity;
   let minY = Infinity;
   let maxY = -Infinity;
-  points.forEach((p) => {
-    if (p.x < minX) minX = p.x;
-    if (p.x > maxX) maxX = p.x;
-    if (p.y < minY) minY = p.y;
-    if (p.y > maxY) maxY = p.y;
+  allTiles.forEach((tile) => {
+    const { x, y } = axialToPixel(tile.q, tile.r);
+    minX = Math.min(minX, x);
+    maxX = Math.max(maxX, x);
+    minY = Math.min(minY, y);
+    maxY = Math.max(maxY, y);
   });
 
-  const width = maxX - minX + padding * 2;
-  const height = maxY - minY + padding * 2;
+  const hexW = Math.sqrt(3) * HEX_SIZE;
+  const margin = 10;
+  const viewX = minX - hexW / 2 - margin;
+  const viewY = minY - HEX_SIZE - margin;
+  const viewW = maxX - minX + hexW + margin * 2;
+  const viewH = maxY - minY + HEX_SIZE * 2 + margin * 2;
 
-  boardWrapEl.style.width = `${width}px`;
-  boardWrapEl.style.height = `${height}px`;
+  let svg = `<svg viewBox="${viewX.toFixed(1)} ${viewY.toFixed(1)} ${viewW.toFixed(1)} ${viewH.toFixed(1)}"
+    xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Generated Catan board">`;
+  svg += SVG_DEFS;
+
+  sea.forEach((tile) => {
+    svg += seaTileSvg(tile);
+  });
 
   cells.forEach((cell) => {
-    const center = toPixel(cell.q, cell.r, hexW, hexH, radiusPx);
-    const left = center.x - minX + padding - hexW / 2;
-    const top = center.y - minY + padding - hexH / 2;
-
-    const hex = document.createElement("div");
-    hex.className = `hex ${cell.resource}`;
-    hex.dataset.resource = RESOURCE_LABELS[cell.resource] || cell.resource;
-    hex.style.left = `${left}px`;
-    hex.style.top = `${top}px`;
-    hex.style.width = `${hexW}px`;
-    hex.style.height = `${hexH}px`;
-
-    const icon = document.createElement("span");
-    icon.className = "icon";
-    icon.textContent = RESOURCE_ICONS[cell.resource] || "";
-    hex.appendChild(icon);
-
-    if (cell.number != null) {
-      const token = document.createElement("span");
-      token.className = HIGH_PROBABILITY_NUMBERS.has(cell.number) ? "token hot" : "token";
-
-      const numberEl = document.createElement("span");
-      numberEl.className = "token-number";
-      numberEl.textContent = String(cell.number);
-      token.appendChild(numberEl);
-
-      const pips = document.createElement("span");
-      pips.className = "pips";
-      pips.textContent = "•".repeat(6 - Math.abs(7 - cell.number));
-      token.appendChild(pips);
-
-      hex.appendChild(token);
-    }
-
-    boardEl.appendChild(hex);
+    svg += landTileSvg(cell);
   });
 
-  renderPorts(ports, cells, { hexW, hexH, radiusPx, minX, minY, padding, width, height }, showPorts);
+  if (showPorts) {
+    const landByCoord = indexCells(cells);
+    const portTiles = choosePortTiles(sea, landByCoord, ports.length);
+    portTiles.forEach((tile, i) => {
+      svg += portSvg(ports[i], tile);
+    });
+  }
+
+  svg += "</svg>";
+  boardEl.innerHTML = svg;
 
   const fairnessStatus = fairnessToggle.checked
     ? attempt >= 0

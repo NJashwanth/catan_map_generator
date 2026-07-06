@@ -8,12 +8,12 @@
   --accent-2: #1a8f75;
   --shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
 
-  --wood: #2d6a4f;
-  --brick: #b54f33;
-  --sheep: #7dbd56;
-  --wheat: #e6b93e;
-  --ore: #5a5f73;
-  --desert: #d8c8a4;
+  --wood: #3f6d34;
+  --brick: #9c5a26;
+  --sheep: #93bd52;
+  --wheat: #d9a52f;
+  --ore: #6d7080;
+  --desert: #d6bf85;
 }
 
 * {
@@ -182,144 +182,28 @@ button.secondary {
 .dot.desert { background: var(--desert); border: 1px solid rgba(0, 0, 0, 0.2); }
 
 .board-shell {
-  min-height: 520px;
   display: flex;
+  justify-content: center;
   margin-top: 0.3rem;
-  overflow-x: auto;
-}
-
-.board-shell.large {
-  min-height: 700px;
-}
-
-/* Auto margins (not place-items) keep the board reachable when it
-   overflows the scroll container, and ports share its coordinate space. */
-.board-wrap {
-  position: relative;
-  margin: auto;
-  flex: none;
-}
-
-.board,
-.port-ring {
-  position: absolute;
-  inset: 0;
+  padding: 0.9rem;
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, #efb3a2 0%, #f2c9a4 46%, #f4e0ac 74%, #ecd9a0 100%);
+  box-shadow: inset 0 0 30px rgba(122, 62, 40, 0.18);
 }
 
 .board {
-  z-index: 2;
+  width: 100%;
+  max-width: 680px;
 }
 
-.port-ring {
-  z-index: 3;
-  pointer-events: none;
-}
-
-.port-tag {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  border-radius: 999px;
-  padding: 0.22rem 0.5rem;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  color: #1c1c1c;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-  white-space: nowrap;
-  z-index: 5;
-}
-
-.port-tag.three {
-  background: #efe6d0;
-}
-
-.port-tag.wood {
-  background: color-mix(in srgb, var(--wood) 45%, white);
-}
-
-.port-tag.brick {
-  background: color-mix(in srgb, var(--brick) 42%, white);
-}
-
-.port-tag.sheep {
-  background: color-mix(in srgb, var(--sheep) 46%, white);
-}
-
-.port-tag.wheat {
-  background: color-mix(in srgb, var(--wheat) 56%, white);
-}
-
-.port-tag.ore {
-  background: color-mix(in srgb, var(--ore) 42%, white);
-  color: #fff;
-}
-
-.hex {
-  clip-path: polygon(50% 0, 98% 25%, 98% 75%, 50% 100%, 2% 75%, 2% 25%);
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.1rem;
-  color: #fff;
-  font-weight: 800;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+.board svg {
+  display: block;
+  width: 100%;
+  height: auto;
   animation: settle 420ms ease both;
+  filter: drop-shadow(0 6px 14px rgba(60, 32, 12, 0.25));
 }
-
-.hex .icon {
-  font-size: 1.05rem;
-  line-height: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
-}
-
-.hex::after {
-  content: attr(data-resource);
-  position: absolute;
-  left: 50%;
-  bottom: 12%;
-  transform: translateX(-50%);
-  font-size: 0.58rem;
-  letter-spacing: 0.05em;
-  opacity: 0.9;
-}
-
-.hex .token {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #f7efdb;
-  color: #111;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  font-size: 0.92rem;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  text-shadow: none;
-}
-
-.hex .token .pips {
-  font-size: 0.5rem;
-  letter-spacing: 0.08em;
-  margin-top: 1px;
-}
-
-.hex .token.hot {
-  color: #b3262f;
-}
-
-.hex.wood { background: var(--wood); }
-.hex.brick { background: var(--brick); }
-.hex.sheep { background: var(--sheep); }
-.hex.wheat { background: var(--wheat); color: #2b2417; text-shadow: none; }
-.hex.ore { background: var(--ore); }
-.hex.desert { background: var(--desert); color: #4a3f2d; text-shadow: none; }
 
 .meta {
   margin: 0.9rem 0 0;
@@ -361,25 +245,6 @@ button.secondary {
 
 @media (max-width: 420px) {
   .board-shell {
-    min-height: 460px;
-  }
-
-  .board-shell.large {
-    min-height: 620px;
-  }
-
-  .hex::after {
-    font-size: 0.53rem;
-  }
-
-  .hex .token {
-    width: 24px;
-    height: 24px;
-    font-size: 0.78rem;
-  }
-
-  .port-tag {
-    font-size: 0.66rem;
-    padding: 0.24rem 0.45rem;
+    padding: 0.5rem;
   }
 }
