@@ -1,28 +1,43 @@
 {
-  "hosting": {
-    "public": ".",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      ".git/**",
-      ".claude/**",
-      ".vscode/**",
-      ".firebase/**",
-      "**/node_modules/**",
-      "README.md"
-    ],
-    "cleanUrls": true,
-    "trailingSlash": false,
-    "headers": [
-      {
-        "source": "**/*.@(js|css)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public,max-age=300"
-          }
-        ]
-      }
-    ]
-  }
+  "hosting": [
+    {
+      "target": "app",
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        ".git/**",
+        ".claude/**",
+        ".vscode/**",
+        ".firebase/**",
+        "**/node_modules/**",
+        "README.md",
+        "legacy-redirect/**"
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "headers": [
+        {
+          "source": "**/*.@(js|css)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public,max-age=300"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "legacy",
+      "public": "legacy-redirect",
+      "redirects": [
+        {
+          "source": "**",
+          "destination": "https://catan-boardgame-map-generator.web.app",
+          "type": 301
+        }
+      ]
+    }
+  ]
 }

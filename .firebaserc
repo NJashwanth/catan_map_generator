@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "catan-map-generator-bd905"
-  }
+  },
+  "targets": {
+    "catan-map-generator-bd905": {
+      "hosting": {
+        "app": [
+          "catan-boardgame-map-generator"
+        ],
+        "legacy": [
+          "catan-map-generator-bd905"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
