@@ -181,32 +181,36 @@ button.secondary {
 .dot.ore { background: var(--ore); }
 .dot.desert { background: var(--desert); border: 1px solid rgba(0, 0, 0, 0.2); }
 
-.board {
-  display: block;
-  margin-top: 0.3rem;
-  position: relative;
-  z-index: 2;
-}
-
 .board-shell {
-  position: relative;
   min-height: 520px;
-  display: grid;
-  place-items: center;
+  display: flex;
   margin-top: 0.3rem;
   overflow-x: auto;
-  overflow-y: visible;
 }
 
 .board-shell.large {
   min-height: 700px;
 }
 
+/* Auto margins (not place-items) keep the board reachable when it
+   overflows the scroll container, and ports share its coordinate space. */
+.board-wrap {
+  position: relative;
+  margin: auto;
+  flex: none;
+}
+
+.board,
 .port-ring {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+}
+
+.board {
+  z-index: 2;
+}
+
+.port-ring {
   z-index: 3;
   pointer-events: none;
 }
@@ -253,41 +257,61 @@ button.secondary {
 }
 
 .hex {
-  clip-path: polygon(50% 0, 96% 25%, 96% 75%, 50% 100%, 4% 75%, 4% 25%);
+  clip-path: polygon(50% 0, 98% 25%, 98% 75%, 50% 100%, 2% 75%, 2% 25%);
   position: absolute;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
   color: #fff;
   font-weight: 800;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
   animation: settle 420ms ease both;
 }
 
+.hex .icon {
+  font-size: 1.05rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+}
+
 .hex::after {
   content: attr(data-resource);
   position: absolute;
   left: 50%;
-  top: 20%;
+  bottom: 12%;
   transform: translateX(-50%);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   letter-spacing: 0.05em;
-  opacity: 0.95;
+  opacity: 0.9;
 }
 
 .hex .token {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: #f7efdb;
   color: #111;
-  display: grid;
-  place-items: center;
-  font-size: 0.9rem;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 0.92rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
 }
 
-.hex.desert .token {
-  display: none;
+.hex .token .pips {
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  margin-top: 1px;
+}
+
+.hex .token.hot {
+  color: #b3262f;
 }
 
 .hex.wood { background: var(--wood); }

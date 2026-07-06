@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Nunito:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260706a" />
+    <link rel="stylesheet" href="styles.css?v=20260706b" />
   </head>
   <body>
     <div class="aurora" aria-hidden="true"></div>
@@ -105,8 +105,10 @@
       <section class="panel board-panel" aria-label="Generated board">
         <h2>Generated Board</h2>
         <div class="board-shell">
-          <div id="portRing" class="port-ring" aria-hidden="true"></div>
-          <div id="board" class="board" aria-live="polite"></div>
+          <div id="boardWrap" class="board-wrap">
+            <div id="board" class="board" aria-live="polite"></div>
+            <div id="portRing" class="port-ring" aria-hidden="true"></div>
+          </div>
         </div>
         <p id="boardMeta" class="meta"></p>
       </section>
@@ -140,14 +142,16 @@
 
     <!--
       Google AdSense script.
-      Keep this enabled in production after replacing your publisher id.
-      It can stay commented in development.
-    -->
+      Uncomment and replace ca-pub-XXXXXXXXXXXXXXXX with your real publisher
+      id before deploying. Leaving it enabled with the placeholder id throws
+      console errors on every page load.
+
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
     <script>
       (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
+    -->
 
-    <script src="script.js?v=20260706a"></script>
+    <script src="script.js?v=20260706b"></script>
   </body>
 </html>

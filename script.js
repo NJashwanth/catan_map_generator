@@ -26,7 +26,7 @@ const MAP_CONFIGS = {
       2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6,
       8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12,
     ],
-    ports: ["three", "wood", "three", "brick", "three", "sheep", "three", "wheat", "three", "ore", "three"],
+    ports: ["three", "wood", "three", "brick", "sheep", "three", "sheep", "wheat", "three", "ore", "three"],
   },
 };
 
@@ -37,6 +37,15 @@ const RESOURCE_LABELS = {
   wheat: "Wheat",
   ore: "Ore",
   desert: "Desert",
+};
+
+const RESOURCE_ICONS = {
+  wood: "\u{1F332}",
+  brick: "\u{1F9F1}",
+  sheep: "\u{1F411}",
+  wheat: "\u{1F33E}",
+  ore: "⛰️",
+  desert: "\u{1F3DC}️",
 };
 
 const PORT_LABELS = {
@@ -60,6 +69,7 @@ const NEIGHBOR_DIRS = [
 
 const boardEl = document.getElementById("board");
 const boardShellEl = document.querySelector(".board-shell");
+const boardWrapEl = document.getElementById("boardWrap");
 const portRingEl = document.getElementById("portRing");
 const metaEl = document.getElementById("boardMeta");
 
@@ -131,7 +141,9 @@ function makeCoords(rowLayout) {
   for (let rowIndex = 0; rowIndex < rowLayout.length; rowIndex += 1) {
     const len = rowLayout[rowIndex];
     const r = rowIndex - centerRow;
-    const qStart = -Math.floor(len / 2);
+    // Rendered x is q + r/2 hexes, so compensate for the per-row half-hex
+    // shift to keep every row visually centered on the same axis.
+    const qStart = Math.round(-(len - 1) / 2 - r / 2);
 
     for (let i = 0; i < len; i += 1) {
       coords.push({ q: qStart + i, r });
@@ -360,7 +372,7 @@ function renderPorts(ports, cells, geometry, showPorts) {
     const ux = anchor.outwardX / magnitude;
     const uy = anchor.outwardY / magnitude;
 
-    const outwardDistance = geometry.radiusPx * 0.95;
+    const outwardDistance = geometry.radiusPx * 0.6;
     const x = anchor.edgeX + ux * outwardDistance;
     const y = anchor.edgeY + uy * outwardDistance;
 
@@ -387,7 +399,8 @@ function renderBoard(result, setup) {
   const hexW = isLarge ? 78 : 84;
   const hexH = isLarge ? 90 : 96;
   const radiusPx = hexW / 2;
-  const padding = isLarge ? 78 : 66;
+  // Wide enough for port tags anchored outside the coastline.
+  const padding = showPorts ? 96 : 66;
 
   const points = cells.map((cell) => toPixel(cell.q, cell.r, hexW, hexH, radiusPx));
 
@@ -405,10 +418,8 @@ function renderBoard(result, setup) {
   const width = maxX - minX + padding * 2;
   const height = maxY - minY + padding * 2;
 
-  boardEl.style.width = `${width}px`;
-  boardEl.style.height = `${height}px`;
-  portRingEl.style.width = `${width}px`;
-  portRingEl.style.height = `${height}px`;
+  boardWrapEl.style.width = `${width}px`;
+  boardWrapEl.style.height = `${height}px`;
 
   cells.forEach((cell) => {
     const center = toPixel(cell.q, cell.r, hexW, hexH, radiusPx);
@@ -423,11 +434,28 @@ function renderBoard(result, setup) {
     hex.style.width = `${hexW}px`;
     hex.style.height = `${hexH}px`;
 
-    const token = document.createElement("span");
-    token.className = "token";
-    token.textContent = cell.number == null ? "" : String(cell.number);
+    const icon = document.createElement("span");
+    icon.className = "icon";
+    icon.textContent = RESOURCE_ICONS[cell.resource] || "";
+    hex.appendChild(icon);
 
-    hex.appendChild(token);
+    if (cell.number != null) {
+      const token = document.createElement("span");
+      token.className = HIGH_PROBABILITY_NUMBERS.has(cell.number) ? "token hot" : "token";
+
+      const numberEl = document.createElement("span");
+      numberEl.className = "token-number";
+      numberEl.textContent = String(cell.number);
+      token.appendChild(numberEl);
+
+      const pips = document.createElement("span");
+      pips.className = "pips";
+      pips.textContent = "•".repeat(6 - Math.abs(7 - cell.number));
+      token.appendChild(pips);
+
+      hex.appendChild(token);
+    }
+
     boardEl.appendChild(hex);
   });
 
@@ -492,5 +520,15 @@ shuffleBtn.addEventListener("click", () => createAndRender({ bumpSeed: true }));
 [playerCountInput, victoryPointsInput, robberModeInput, portsToggle, randomPortsToggle].forEach((el) => {
   el.addEventListener("change", () => createAndRender({ bumpSeed: false }));
 });
+
+const urlParams = new URLSearchParams(window.location.search);
+const playersParam = urlParams.get("players");
+if (playersParam && ["2", "3", "4", "5", "6"].includes(playersParam)) {
+  playerCountInput.value = playersParam;
+}
+const seedParam = urlParams.get("seed");
+if (seedParam) {
+  seedInput.value = seedParam.slice(0, 40);
+}
 
 createAndRender();
