@@ -212,10 +212,39 @@ button.secondary {
   line-height: 1.4;
 }
 
-.ad-panel p {
+.content-wrap {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 0 auto 1.5rem;
+}
+
+.content-panel {
+  padding: 1.4rem 1.6rem;
+  line-height: 1.65;
+}
+
+.content-panel h2 {
+  margin: 1.4rem 0 0.5rem;
+}
+
+.content-panel h2:first-child {
   margin-top: 0;
-  margin-bottom: 0.9rem;
-  line-height: 1.4;
+}
+
+.content-panel p,
+.content-panel ol,
+.content-panel ul {
+  margin: 0 0 0.9rem;
+}
+
+.content-panel li {
+  margin-bottom: 0.4rem;
+}
+
+.content-panel code {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 0.08rem 0.35rem;
+  font-size: 0.9em;
 }
 
 .site-footer {
@@ -223,6 +252,17 @@ button.secondary {
   padding: 0 0 1.4rem;
   font-size: 0.9rem;
   opacity: 0.9;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer-nav a {
+  color: #ffe9c4;
+  font-weight: 600;
 }
 
 @keyframes settle {
@@ -238,7 +278,7 @@ button.secondary {
 
 @media (min-width: 920px) {
   .layout {
-    grid-template-columns: 320px 1fr 280px;
+    grid-template-columns: 340px 1fr;
     align-items: start;
   }
 }

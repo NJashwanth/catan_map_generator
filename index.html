@@ -14,7 +14,12 @@
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Nunito:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260706c" />
+    <link rel="stylesheet" href="styles.css?v=20260706d" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7222025310513192"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <div class="aurora" aria-hidden="true"></div>
@@ -110,44 +115,57 @@
         <p id="boardMeta" class="meta"></p>
       </section>
 
-      <aside class="panel ad-panel" aria-label="Advertisement">
-        <h2>Support This Project</h2>
-        <p>
-          Ads appear here once AdSense is configured with your publisher ID and
-          this site is approved.
-        </p>
-
-        <!--
-          Google AdSense placeholder.
-          Replace ca-pub-XXXXXXXXXXXXXXXX with your real publisher id.
-          Replace data-ad-slot with your ad slot id.
-        -->
-        <ins
-          class="adsbygoogle"
-          style="display: block"
-          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-          data-ad-slot="1234567890"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        ></ins>
-      </aside>
     </main>
 
+    <section class="content-wrap" aria-label="Guides">
+      <div class="panel content-panel">
+        <h2>How to Use the Generator</h2>
+        <ol>
+          <li>Pick the <strong>number of players</strong>. Games with 2&ndash;4 players use the classic 19-hex island; 5 and 6 players switch to the larger 30-hex extension layout with extra number tokens and ports.</li>
+          <li>Optionally type a <strong>seed</strong> &mdash; any word or number. The same seed always produces the same board, so you can share it with your group (the URL also accepts <code>?seed=gamenight&amp;players=6</code>).</li>
+          <li>Click <strong>Generate Map</strong>, or <strong>Shuffle Again</strong> to step to a fresh variation.</li>
+          <li>Recreate the board with your physical tiles, number tokens, and harbor pieces &mdash; then play as usual.</li>
+        </ol>
+
+        <h2>What Makes a Board Fair?</h2>
+        <p>
+          Two dice follow a bell curve: 6 and 8 are rolled far more often than 2 or 12. When the
+          high-probability tokens end up on adjacent hexes, whoever settles that corner gets a huge
+          head start. With <strong>fair number spacing</strong> enabled, the generator rejects any
+          layout where a 6 or 8 touches another 6 or 8, so strong spots are spread around the island.
+        </p>
+        <p>
+          <strong>Reduce resource clumping</strong> works the same way for terrain: it rejects boards
+          where too many hexes of one resource sit side by side, so no single settlement can lock up
+          all the wood or all the ore. Both checks can be turned off if you prefer fully wild boards.
+        </p>
+
+        <h2>Playing with 5 or 6 Players</h2>
+        <p>
+          The extension board adds roughly 50% more land: 30 terrain hexes, two deserts, 28 number
+          tokens, and 11 harbors (five 3:1 harbors and six 2:1 resource harbors, including two sheep
+          harbors). Games also use the <em>special building phase</em>: after each player's turn,
+          everyone else may build with cards already in hand. Expect longer games &mdash; many groups
+          raise the victory point target to 12 to keep the endgame from feeling sudden.
+        </p>
+
+        <h2>Reading the Number Tokens</h2>
+        <p>
+          The dots under each number show its probability out of 36 dice combinations &mdash; one dot
+          for 2 or 12, up to five dots for 6 or 8 (shown in red). Adding up the dots around a
+          settlement spot is the quickest way to compare starting positions.
+        </p>
+      </div>
+    </section>
+
     <footer class="site-footer">
+      <nav class="footer-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy Policy</a>
+      </nav>
       <p>Built for board game nights. Not affiliated with Catan publishers.</p>
     </footer>
-
-    <!--
-      Google AdSense script.
-      Uncomment and replace ca-pub-XXXXXXXXXXXXXXXX with your real publisher
-      id before deploying. Leaving it enabled with the placeholder id throws
-      console errors on every page load.
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-    -->
 
     <script src="script.js?v=20260706c"></script>
   </body>
