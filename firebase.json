@@ -12,7 +12,8 @@
         ".firebase/**",
         "**/node_modules/**",
         "README.md",
-        "legacy-redirect/**"
+        "legacy-redirect/**",
+        "docs/**"
       ],
       "cleanUrls": true,
       "trailingSlash": false,
