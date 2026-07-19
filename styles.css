@@ -49,8 +49,33 @@ body {
 }
 
 .site-header {
-  padding: 2.6rem 0 1rem;
+  padding: 1.6rem 0 1rem;
   color: #fff8ee;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.2rem;
+  margin-bottom: 1.6rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.site-nav a {
+  color: #f3e2c2;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 0.15rem;
+}
+
+.site-nav a:hover {
+  color: #ffffff;
+}
+
+.site-nav a[aria-current="page"] {
+  color: #ffffff;
+  border-bottom-color: var(--accent);
 }
 
 .site-header h1 {

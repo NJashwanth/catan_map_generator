@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://catan-boardgame-map-generator.web.app/sitemap.xml

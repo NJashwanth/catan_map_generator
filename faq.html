@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ — Catan Map Generator</title>
+    <meta
+      name="description"
+      content="Frequently asked questions about the Catan Map Generator: seeds, sharing boards, fairness rules, player counts, and printing."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Nunito:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260706e" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7222025310513192"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/guide">Setup Guide</a>
+        <a href="/balance">Board Balance</a>
+        <a href="/faq" aria-current="page">FAQ</a>
+        <a href="/about">About</a>
+      </nav>
+      <h1>Frequently Asked Questions</h1>
+      <p>Seeds, sharing, fairness rules, and everything else people ask.</p>
+    </header>
+
+    <section class="content-wrap">
+      <div class="panel content-panel">
+        <h2>How do seeds work?</h2>
+        <p>
+          Every board is produced by a deterministic random generator initialized from the seed
+          text. The same seed with the same settings always produces the identical board &mdash;
+          type <code>gamenight</code> today or next year and you'll get the same island. Leaving
+          the seed blank uses the current time, so every click is fresh. The seed of the current
+          board is always shown below the map, so you can write it down or share it.
+        </p>
+
+        <h2>Can I share a board with my group?</h2>
+        <p>
+          Yes &mdash; two ways. Share the seed and settings and let others type them in, or share a
+          direct link: the site reads <code>?seed=&hellip;</code> and <code>?players=&hellip;</code>
+          from the URL. For example,
+          <a href="/?seed=gamenight&amp;players=6"><code>/?seed=gamenight&amp;players=6</code></a>
+          opens the six-player board for seed "gamenight" on any device.
+        </p>
+
+        <h2>What exactly do the fairness options do?</h2>
+        <p>
+          <strong>Fair number spacing</strong> rejects boards where a 6 or 8 sits next to another 6
+          or 8, so no corner of the island becomes overwhelmingly strong.
+          <strong>Reduce resource clumping</strong> rejects boards where hexes of one terrain type
+          bunch together. The generator shuffles and re-checks until a valid board appears. The
+          <a href="/balance">board balance page</a> explains the probability math behind both rules.
+        </p>
+
+        <h2>Why does the board say "fairness fallback"?</h2>
+        <p>
+          For a handful of seeds the generator can't find a layout satisfying every enabled check
+          within its attempt limit, so it shows the best unconstrained board for that seed instead
+          and labels it honestly. Shuffling again or tweaking the seed text virtually always
+          resolves it.
+        </p>
+
+        <h2>Which player counts are supported?</h2>
+        <p>
+          Two through six. Games with 2&ndash;4 players use the classic 19-hex island with 9
+          harbors; choosing 5 or 6 players switches to the 30-hex extension layout with 28 number
+          tokens and 11 harbors. The <a href="/guide">setup guide</a> covers the differences in
+          detail, including the special building phase used in big games.
+        </p>
+
+        <h2>Do I need to install anything?</h2>
+        <p>
+          No. The generator is a single lightweight page that runs entirely in your browser &mdash;
+          phone, tablet, or laptop. Nothing you type is uploaded anywhere; board generation happens
+          on your device.
+        </p>
+
+        <h2>Can I print a board?</h2>
+        <p>
+          The board is drawn as a crisp vector image, so your browser's print function (or a
+          screenshot) reproduces it cleanly at any size. Landscape orientation fits the island
+          best. Many groups simply prop a phone or tablet at the end of the table and copy the
+          layout with physical tiles.
+        </p>
+
+        <h2>Is this an official Catan product?</h2>
+        <p>
+          No. This is an independent, fan-made setup utility for personal game nights. It is not
+          affiliated with, endorsed by, or connected to any publisher of the Catan board game, and
+          all artwork on the site is original. You still need the physical game to play &mdash;
+          this tool only decides where the tiles go.
+        </p>
+
+        <h2>I found a bug or have an idea.</h2>
+        <p>
+          Great &mdash; send it to <a href="mailto:jashwanthn066@gmail.com">jashwanthn066@gmail.com</a>.
+          Bug reports with the seed and player count that triggered the problem are especially easy
+          to reproduce and fix.
+        </p>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <nav class="footer-nav">
+        <a href="/">Home</a>
+        <a href="/guide">Setup Guide</a>
+        <a href="/balance">Board Balance</a>
+        <a href="/faq">FAQ</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy Policy</a>
+      </nav>
+      <p>Built for board game nights. Not affiliated with Catan publishers.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What Makes a Balanced Board? — Catan Map Generator</title>
+    <meta
+      name="description"
+      content="Dice probability, pip counts, and resource distribution: the math behind balanced Catan boards and how the generator applies it."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Nunito:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260706e" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7222025310513192"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/guide">Setup Guide</a>
+        <a href="/balance" aria-current="page">Board Balance</a>
+        <a href="/faq">FAQ</a>
+        <a href="/about">About</a>
+      </nav>
+      <h1>The Math of a Fair Board</h1>
+      <p>Why 6s and 8s decide games, and how spacing them out keeps things interesting.</p>
+    </header>
+
+    <section class="content-wrap">
+      <div class="panel content-panel">
+        <h2>Two Dice Are Not Fair &mdash; and That's the Game</h2>
+        <p>
+          Rolling two six-sided dice produces 36 equally likely combinations, but the sums are
+          anything but equal. There is exactly one way to roll a 2 (1+1) and one way to roll a 12
+          (6+6), but five ways each to roll a 6 or an 8. A hex numbered 6 will pay out five times
+          as often as a hex numbered 2. Every number token shows this as a row of dots &mdash;
+          "pips" &mdash; one pip per combination:
+        </p>
+        <ul>
+          <li><strong>2 and 12</strong> — 1 pip each (about a 3% chance per roll)</li>
+          <li><strong>3 and 11</strong> — 2 pips (6%)</li>
+          <li><strong>4 and 10</strong> — 3 pips (8%)</li>
+          <li><strong>5 and 9</strong> — 4 pips (11%)</li>
+          <li><strong>6 and 8</strong> — 5 pips (14%), shown in red</li>
+          <li><strong>7</strong> — 6 pips, but 7 moves the robber instead of producing resources</li>
+        </ul>
+
+        <h2>Counting Pips Around a Corner</h2>
+        <p>
+          A settlement sits on a corner touching up to three hexes, so its expected income is
+          simply the sum of the pips around it. A corner touching a 6, an 8, and a 9 collects on
+          14 of 36 combinations &mdash; nearly 40% of all rolls. A corner touching a 2, a 3, and a
+          12 collects on just 4 of 36. When you evaluate starting positions, ignore the printed
+          numbers and count pips; it's the single most useful habit a new player can learn.
+        </p>
+
+        <h2>Why Adjacent 6s and 8s Break Boards</h2>
+        <p>
+          When two five-pip hexes share an edge, the three corners along that edge become
+          dramatically stronger than anything else on the map. Whoever places there first banks a
+          statistical advantage for the whole game, and the remaining players fight over scraps.
+          The generator's <strong>fair number spacing</strong> option rejects any layout where a 6
+          or 8 neighbors another 6 or 8, which caps how strong any single corner can be without
+          flattening the board into uniformity &mdash; there are still better and worse spots,
+          they're just spread around the island.
+        </p>
+
+        <h2>Resource Variety Matters Too</h2>
+        <p>
+          Numbers aren't the whole story. If all four forest hexes end up in one corner of the
+          island, one player can monopolize wood and everyone else must trade through them. The
+          <strong>reduce resource clumping</strong> option limits how many same-type hexes can sit
+          side by side, so every region of the board offers a mix. Combined with number spacing,
+          this produces boards where several distinct strategies &mdash; ore-wheat cities, wood-brick
+          roads, sheep-heavy development cards &mdash; are viable from different starting areas.
+        </p>
+
+        <h2>Harbors Change the Value of Everything</h2>
+        <p>
+          A 2:1 harbor effectively doubles the value of overflow production in its resource. A
+          pasture-heavy board with a sheep harbor turns "too much sheep" from a joke into an
+          engine. When you evaluate a generated board, glance at which 2:1 harbors landed near
+          strong matching hexes &mdash; those pairings are usually the most contested placements
+          after the obvious high-pip corners.
+        </p>
+
+        <h2>Balanced Isn't Boring</h2>
+        <p>
+          A perfectly uniform board would be a coin flip; a wildly skewed one is decided during
+          setup. The sweet spot &mdash; and what this generator aims for &mdash; is a board where
+          the best positions are debatable. If your group prefers chaos, switch both fairness
+          checks off and take the island as the dice intended. Either way, the seed system means
+          any board you love (or love to argue about) can be regenerated and replayed &mdash; see
+          the <a href="/faq">FAQ</a> for how seeds work.
+        </p>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <nav class="footer-nav">
+        <a href="/">Home</a>
+        <a href="/guide">Setup Guide</a>
+        <a href="/balance">Board Balance</a>
+        <a href="/faq">FAQ</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy Policy</a>
+      </nav>
+      <p>Built for board game nights. Not affiliated with Catan publishers.</p>
+    </footer>
+  </body>
+</html>
